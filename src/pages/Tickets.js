@@ -116,7 +116,7 @@ export const Tickets = () => {
     },
     {
       Header: 'Checksum',
-      accessor: 'checkSum',
+      accessor: 'checksum',
       style: {
         display: 'flex',
         flexDirection: 'column',

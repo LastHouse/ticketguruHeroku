@@ -86,7 +86,7 @@ export const Events = () => {
         }
       })
       .then((resJson) => {
-        //console.log(resJson._embedded.events);
+        console.log(resJson._embedded.events);
         dispatch({
           type: 'FETCH_EVENTS_SUCCESS',
           payload: resJson._embedded.events,

@@ -15,13 +15,13 @@ export default function ReadTicket(props) {
   const [open, setOpen] = useState(false);
 
   const [ticket, setTicket] = useState({
-    checkSum: '',
-    ticketStatus: ''
+    checksum: '',
+    ticketStatus: '',
   });
 
   const handleClickOpen = () => {
     setTicket({
-      checkSum: props.ticket.checkSum
+      checksum: props.ticket.checkSum,
     });
     setOpen(true);
   };
@@ -35,12 +35,13 @@ export default function ReadTicket(props) {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${auth.token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ticketStatus: 'http://localhost:8080/api/ticketStatuses/2'
-      })
-    }).catch(err => console.error(err));
+        ticketStatus:
+          'https://rbmk-ticketguru-backend.herokuapp.com/api/ticketStatuses/2',
+      }),
+    }).catch((err) => console.error(err));
   };
 
   return (
@@ -62,7 +63,7 @@ export default function ReadTicket(props) {
             fgColor="#000000"
             level="Q"
             style={{ width: 256 }}
-            value={ticket.checkSum}
+            value={ticket.checksum}
           />
         </DialogContent>
 
