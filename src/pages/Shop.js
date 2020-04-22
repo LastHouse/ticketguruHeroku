@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import EventCard from '../components/EventCard';
 import { useAuthContext } from '../utils/AuthContext';
 import axios from 'axios';
 
@@ -18,35 +20,13 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-  table: {
-    minWidth: 650,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
 }));
 
-export const Events = () => {
+export const Shop = () => {
   const classes = useStyles();
   const { auth } = useAuthContext();
   const [events, setEvents] = useState([]);
   const [eventTickets, setEventTickets] = useState([]);
-  const [links, setLinks] = useState([]);
-
-  useEffect(() => {
-    const fetchLinks = () => {
-      fetch('https://rbmk-ticketguru-backend.herokuapp.com/api/events', {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => setLinks(data._embedded.events))
-        .catch((err) => console.error(err));
-    };
-    fetchLinks();
-  }, [auth.token]);
-
-  console.log(links);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -86,20 +66,26 @@ export const Events = () => {
   }, [auth.token]);
 
   return (
-    <div className="events">
-      Hiihaa!
-      <ul>
-        {events.map((event) => (
-          <li key={event.name}>{event.name}</li>
+    <div>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        justify="space-evenly"
+        alignItems="flex-start"
+      >
+        {events.map((item) => (
+          <EventCard
+            key={item.dateTime}
+            name={item.name}
+            date={item.dateTime}
+            ticketCapacity={item.ticketCapacity}
+            info={item.info}
+            links={item._links}
+          />
         ))}
-      </ul>
-      <br></br>
-      <ul>
-        {links.map((link) => (
-          <li key={link._links.venue.href}>{link._links.venue.href}</li>
-        ))}
-      </ul>
+      </Grid>
     </div>
   );
 };
-export default Events;
+export default Shop;

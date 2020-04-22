@@ -6,8 +6,6 @@ import moment from 'moment/moment.js';
 import ReadTicket from '../components/ReadTicket';
 import TicketStatus from '../components/TicketStatus';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
 
 export const TicketContext = React.createContext();
 
@@ -153,27 +151,7 @@ export const Tickets = () => {
       ) : state.hasError ? (
         <span className="error">AN ERROR HAS OCCURED</span>
       ) : (
-        <ReactTable
-          filterable={false}
-          data={state.tickets}
-          columns={columns}
-          SubComponent={(row) => {
-            return (
-              <div>
-                <Input
-                  align="center"
-                  type="number"
-                  id="quantity"
-                  name="quantity"
-                  defaultValue="1"
-                />
-                <Button size="small" variant="contained" color="primary">
-                  Testi
-                </Button>
-              </div>
-            );
-          }}
-        />
+        <ReactTable filterable={false} data={state.tickets} columns={columns} />
       )}
     </div>
   );

@@ -6,7 +6,7 @@ const PublicRouter = () => {
   return (
     <div>
       <Route exact path="/auth/login" component={Login} />
-      <Redirect from="/auth" to="/auth/login" exact />
+      <Redirect from="/" to="/auth/login" exact />
     </div>
   );
 };

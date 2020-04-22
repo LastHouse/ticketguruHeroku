@@ -5,43 +5,41 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
-import AnnouncementIcon from '@material-ui/icons/Announcement';
+import SelectAllIcon from '@material-ui/icons/SelectAll';
 import Tooltip from '@material-ui/core/Tooltip';
-import { useAuthContext } from '../utils/AuthContext';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import { useAuthContext } from '../utils/AuthContext';
 
-export default function TicketStatus(props) {
+export default function EventType(props) {
   const { auth } = useAuthContext();
   const [open, setOpen] = useState(false);
-
-  const [status, setStatus] = useState([]);
+  const [type, setType] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
-    fetchStatus();
+    fetchType();
   };
 
   const handleClose = () => {
-    console.log(status);
     setOpen(false);
   };
 
-  const fetchStatus = () => {
-    fetch(props.ticket._links.ticketStatus.href, {
+  const fetchType = () => {
+    fetch(props.event._links.eventType.href, {
       headers: {
         Authorization: `Bearer ${auth.token}`,
       },
     })
       .then((response) => response.json())
-      .then((data) => setStatus(data))
+      .then((data) => setType(data))
       .catch((err) => console.error(err));
   };
 
   return (
     <div>
-      <Tooltip title="Status">
+      <Tooltip title="Event Type">
         <IconButton onClick={() => handleClickOpen()}>
-          <AnnouncementIcon />
+          <SelectAllIcon />
         </IconButton>
       </Tooltip>
       <Dialog
@@ -49,12 +47,14 @@ export default function TicketStatus(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Ticket Status</DialogTitle>
-
+        <DialogTitle id="form-dialog-title">Event Type</DialogTitle>
         <DialogContent>
-          <DialogContentText> {status.name}</DialogContentText>
+          <DialogContentText> {type.name}</DialogContentText>
         </DialogContent>
 
+        <DialogContent>
+          <DialogContentText> {type.info}</DialogContentText>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Exit
