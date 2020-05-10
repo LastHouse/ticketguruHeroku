@@ -9,30 +9,43 @@ import AnnouncementIcon from '@material-ui/icons/Announcement';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useAuthContext } from '../utils/AuthContext';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import axios from 'axios';
+import moment from 'moment/moment.js';
+import 'moment-timezone';
 
-export default function TicketStatus(props) {
+export default function SaleRows(props) {
   const { auth } = useAuthContext();
   const [open, setOpen] = useState(false);
-
-  const [status, setStatus] = useState([]);
+  const [saleRows, setSaleRows] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
-    fetchStatus();
+    fetchSaleRow();
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const fetchStatus = () => {
-    fetch(props.ticket._links.ticketStatus.href, {
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setStatus(data))
+  const options = {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const fetchSaleRow = () => {
+    axios
+      .get(props.saleEvent._links.saleRows.href, options)
+      .then((response) => {
+        return axios.get(
+          response.data._embedded.saleRows[0]._links.tickets.href,
+          options
+        );
+      })
+      .then((res) => {
+        setSaleRows(res.data._embedded.tickets);
+      })
       .catch((err) => console.error(err));
   };
 
@@ -48,10 +61,16 @@ export default function TicketStatus(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Ticket Status</DialogTitle>
+        <DialogTitle id="form-dialog-title">Sale Rows</DialogTitle>
 
         <DialogContent>
-          <DialogContentText> {status.name}</DialogContentText>
+          {saleRows.map((item, i) => (
+            <DialogContentText key={i}>
+              {moment(item.created).format('DD/MM/YYYY HH:mm')}
+              <br></br>
+              {item.checksum}
+            </DialogContentText>
+          ))}
         </DialogContent>
 
         <DialogActions>

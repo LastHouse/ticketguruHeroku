@@ -9,6 +9,8 @@ import SelectAllIcon from '@material-ui/icons/SelectAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { QRCode } from 'react-qr-svg';
 import { useAuthContext } from '../utils/AuthContext';
+import moment from 'moment/moment.js';
+import 'moment-timezone';
 
 export default function ReadTicket(props) {
   const { auth } = useAuthContext();
@@ -20,8 +22,10 @@ export default function ReadTicket(props) {
   });
 
   const handleClickOpen = () => {
+    console.log(props.ticket);
+    console.log(props.ticket._links.self.href);
     setTicket({
-      checksum: props.ticket.checkSum,
+      checksum: props.ticket.checksum,
     });
     setOpen(true);
   };
@@ -68,12 +72,14 @@ export default function ReadTicket(props) {
         </DialogContent>
 
         <DialogContent>
+          <p>Cheksum: {ticket.checksum}</p>
+          <p>Created: {moment(ticket.created).format('DD/MM/YYYY HH:mm')}</p>
+        </DialogContent>
+        <DialogActions>
           <Button variant="contained" color="secondary" onClick={markUsed}>
             Mark as Used
           </Button>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button variant="contained" onClick={handleClose} color="primary">
             Exit
           </Button>
         </DialogActions>

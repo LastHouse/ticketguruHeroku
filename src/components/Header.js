@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,6 +15,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import GradeIcon from '@material-ui/icons/Grade';
 import { Link } from 'react-router-dom';
+import Badge from '@material-ui/core/Badge';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { CartContext } from '../utils/CartContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
   const { auth, dispatch } = useAuthContext();
   const classes = useStyles();
+  const [cart, setCart] = useContext(CartContext);
 
   const [drawerState, setDrawerState] = React.useState({
     top: false,
@@ -60,7 +64,7 @@ const Header = () => {
     right: false,
   });
 
-  const toggleDrawer = (side, open) => (event) => {
+  const toggleDrawer = (anchor, open) => (event) => {
     if (
       event.type === 'keydown' &&
       (event.key === 'Tab' || event.key === 'Shift')
@@ -68,15 +72,16 @@ const Header = () => {
       return;
     }
 
-    setDrawerState({ ...drawerState, [side]: open });
+    setDrawerState({ ...drawerState, [anchor]: open });
   };
 
-  const sideList = (side) => (
+  const sideList = (anchor) => (
     <div
+      anchor="left"
       className={classes.list}
       role="presentation"
-      onClick={toggleDrawer(side, false)}
-      onKeyDown={toggleDrawer(side, false)}
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
         <Divider />
@@ -95,13 +100,6 @@ const Header = () => {
           <ListItemText>Tickets</ListItemText>
         </ListItem>
 
-        <ListItem button component={Link} to="/app/events">
-          <ListItemIcon>
-            <GradeIcon />
-          </ListItemIcon>
-          <ListItemText>Events</ListItemText>
-        </ListItem>
-
         <ListItem button component={Link} to="/app/eventstable">
           <ListItemIcon>
             <GradeIcon />
@@ -109,25 +107,11 @@ const Header = () => {
           <ListItemText>Events Table</ListItemText>
         </ListItem>
 
-        <ListItem button component={Link} to="/app/ticketreader">
+        <ListItem button component={Link} to="/app/saleeventstable">
           <ListItemIcon>
             <GradeIcon />
           </ListItemIcon>
-          <ListItemText>Ticket Reader</ListItemText>
-        </ListItem>
-
-        <ListItem button component={Link} to="/app/shop">
-          <ListItemIcon>
-            <GradeIcon />
-          </ListItemIcon>
-          <ListItemText>Shop</ListItemText>
-        </ListItem>
-
-        <ListItem button component={Link} to="/app/selltickets">
-          <ListItemIcon>
-            <GradeIcon />
-          </ListItemIcon>
-          <ListItemText>Sell Tickets</ListItemText>
+          <ListItemText>Sale Events</ListItemText>
         </ListItem>
       </List>
       <Divider />
@@ -153,13 +137,31 @@ const Header = () => {
           <Drawer open={drawerState.left} onClose={toggleDrawer('left', false)}>
             {sideList('left')}
           </Drawer>
+
           <Typography variant="h6" className={classes.title}>
             TicketGuru
           </Typography>
+          {auth.isAuthenticated ? (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              onClick={toggleDrawer('right', true)}
+              aria-label="show cart items"
+              color="inherit"
+              component={Link}
+              to="/app/shoppingcart"
+            >
+              <Badge badgeContent={cart.length} color="secondary">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          ) : null}
+
           <div>
             {' '}
             {auth.isAuthenticated ? (
               <Button
+                size="small"
                 variant="contained"
                 color="secondary"
                 onClick={() => dispatch(logout())}

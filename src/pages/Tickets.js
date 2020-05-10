@@ -3,9 +3,11 @@ import { useAuthContext } from '../utils/AuthContext';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import moment from 'moment/moment.js';
+import 'moment-timezone';
 import ReadTicket from '../components/ReadTicket';
 import TicketStatus from '../components/TicketStatus';
 import { makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 export const TicketContext = React.createContext();
 
@@ -89,7 +91,7 @@ export const Tickets = () => {
         }
       })
       .then((resJson) => {
-        console.log(resJson._embedded.tickets);
+        //console.log(resJson._embedded.tickets);
         dispatch({
           type: 'FETCH_TICKETS_SUCCESS',
           payload: resJson._embedded.tickets,
@@ -146,12 +148,13 @@ export const Tickets = () => {
 
   return (
     <div className={classes.root}>
+      <CssBaseline />
       {state.isFetching ? (
         <span className="loader">LOADING...</span>
       ) : state.hasError ? (
         <span className="error">AN ERROR HAS OCCURED</span>
       ) : (
-        <ReactTable filterable={false} data={state.tickets} columns={columns} />
+        <ReactTable filterable={true} data={state.tickets} columns={columns} />
       )}
     </div>
   );
