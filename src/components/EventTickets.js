@@ -27,7 +27,6 @@ export default function EventTicket(props) {
   };
 
   const handleClose = () => {
-    console.log(cart);
     setOpen(false);
   };
 
@@ -37,6 +36,8 @@ export default function EventTicket(props) {
       'Content-Type': 'application/json',
     },
   };
+
+  // CHECK IF EVENT INVALID === NULL
 
   function fetchTicket() {
     axios
@@ -75,6 +76,8 @@ export default function EventTicket(props) {
       price: ticket.price,
       name: event.name,
       dateTime: event.dateTime,
+      ticket: ticket._links.self.href,
+      event: ticket._links.event.href,
     };
 
     setCart((currentCart) => [...currentCart, item]);

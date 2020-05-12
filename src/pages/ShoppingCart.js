@@ -8,12 +8,12 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { CartContext } from '../utils/CartContext';
-import { TicketContext } from '../utils/TicketContext';
 import axios from 'axios';
 import { QRCode } from 'react-qr-svg';
 import Button from '@material-ui/core/Button';
 import moment from 'moment/moment.js';
 import 'moment-timezone';
+import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,8 +34,15 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     flexDirection: 'column',
   },
+  qr: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
   fixedHeight: {
-    height: 500,
+    height: 'vh',
   },
 }));
 
@@ -45,7 +52,6 @@ export default function ShoppingCart() {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [newTicket, setNewTicket] = useState([]);
   const [cart, setCart] = useContext(CartContext);
-  const [ticket, setTicket] = useContext(TicketContext);
   const totalPrice = cart.reduce((acc, curr) => acc + curr.price, 0);
 
   const options = {
@@ -55,9 +61,11 @@ export default function ShoppingCart() {
     },
   };
 
-  // TÄSSÄ TULISI ARRAY.MAP(CART), JOTTA SALEROWILLE MENEE USEAMPI LIPPU!!!
-
-  // LISÄÄ SETCART MUKANA TICKET._LINKS.SELF.HREF??
+  const ticketBody = cart.map((item) => ({
+    eventTicket: item.ticket,
+    count: 1,
+    discount: 0,
+  }));
 
   function sellTicket() {
     axios
@@ -66,33 +74,22 @@ export default function ShoppingCart() {
 
         {
           user: 'https://rbmk-ticketguru-backend.herokuapp.com/api/users/3',
+          saleRows: ticketBody,
         },
         options
       )
-      .then((saleEvent) => {
-        return axios
-          .post(
-            'https://rbmk-ticketguru-backend.herokuapp.com/api/saleRows',
-            {
-              eventTicket: ticket._links.self.href,
-              saleEvent: saleEvent.data._links.self.href,
-              count: 1,
-              discount: 0,
-            },
-            options
-          )
-          .then((saleRow) => {
-            return axios.get(saleRow.data._links.tickets.href, options);
-          })
-          .then((response) => {
-            setNewTicket(response.data._embedded.tickets);
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-          .finally(function () {
-            setCart([]);
-          });
+
+      .then((tickets) => {
+        return axios.get(tickets.data._links.tickets.href, options);
+      })
+      .then((response) => {
+        setNewTicket(response.data._embedded.tickets);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(function () {
+        setCart([]);
       });
   }
 
@@ -108,20 +105,27 @@ export default function ShoppingCart() {
     if (cart.length === 0) {
       return (
         <div>
-          <p>Nothing here...</p>
+          <h4>Nothing here...</h4>
         </div>
       );
     } else {
       return (
         <div>
-          <p>Items in cart : {cart.length}</p>
+          <h3>Items in cart : {cart.length}</h3>
+          <Divider />
           {cart.map((item, i) => (
             <div key={i}>
               <p>{cart[i].name}</p>
-              <p>{moment(cart[0].dateTime).format('DD/MM/YYYY HH:mm')}</p>
+              <p>Price: {cart[i].price} €</p>
+              <p>
+                Date & Time:{' '}
+                {moment(cart[0].dateTime).format('DD/MM/YYYY HH:mm')}
+              </p>
+              <Divider />
             </div>
           ))}
-          <p>Total price: {totalPrice}</p>
+          <Divider />
+          <h4>Total price: {totalPrice} €</h4>
         </div>
       );
     }
@@ -182,25 +186,25 @@ export default function ShoppingCart() {
                         Ticket {i + 1}
                       </Typography>
                       <p>Checksum: {item.checksum}</p>
-                      <QRCode
-                        className={classes.paper}
-                        bgColor="#FFFFFF"
-                        fgColor="#000000"
-                        level="Q"
-                        style={{ width: 250 }}
-                        value={item.checksum}
-                      />
-
-                      <Button
-                        size="small"
-                        variant="contained"
-                        onClick={receipt}
-                        color="secondary"
-                      >
-                        Print
-                      </Button>
+                      <div className={classes.qr}>
+                        <QRCode
+                          bgColor="#FFFFFF"
+                          fgColor="#000000"
+                          level="Q"
+                          style={{ width: 300 }}
+                          value={item.checksum}
+                        />
+                      </div>
                     </div>
                   ))}
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={receipt}
+                    color="secondary"
+                  >
+                    Print
+                  </Button>
                 </React.Fragment>
               </Paper>
             </Grid>

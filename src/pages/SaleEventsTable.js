@@ -19,7 +19,7 @@ export default function SaleEventsTable() {
     },
   };
 
-  const getSaleEvents = () => {
+  useEffect(() => {
     axios
       .get(
         'https://rbmk-ticketguru-backend.herokuapp.com/api/saleEvents',
@@ -31,11 +31,8 @@ export default function SaleEventsTable() {
       })
       .catch(function (error) {
         console.log(error);
-      })
-      .finally(function () {});
-  };
-
-  useEffect(() => getSaleEvents(), []);
+      });
+  }, []);
 
   const columns = [
     {
