@@ -86,20 +86,6 @@ const Header = () => {
       <List>
         <Divider />
 
-        <ListItem button component={Link} to="/app/home">
-          <ListItemIcon>
-            <GradeIcon />
-          </ListItemIcon>
-          <ListItemText>Home</ListItemText>
-        </ListItem>
-
-        <ListItem button component={Link} to="/app/tickets">
-          <ListItemIcon>
-            <GradeIcon />
-          </ListItemIcon>
-          <ListItemText>Tickets</ListItemText>
-        </ListItem>
-
         <ListItem button component={Link} to="/app/eventstable">
           <ListItemIcon>
             <GradeIcon />
@@ -113,8 +99,16 @@ const Header = () => {
           </ListItemIcon>
           <ListItemText>Sale Events</ListItemText>
         </ListItem>
+
+        <ListItem button component={Link} to="/app/tickets">
+          <ListItemIcon>
+            <GradeIcon />
+          </ListItemIcon>
+          <ListItemText>Tickets</ListItemText>
+        </ListItem>
+
+        <Divider />
       </List>
-      <Divider />
     </div>
   );
 

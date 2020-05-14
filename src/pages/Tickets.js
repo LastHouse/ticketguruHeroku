@@ -9,8 +9,6 @@ import TicketStatus from '../components/TicketStatus';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-export const TicketContext = React.createContext();
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -91,7 +89,6 @@ export const Tickets = () => {
         }
       })
       .then((resJson) => {
-        //console.log(resJson._embedded.tickets);
         dispatch({
           type: 'FETCH_TICKETS_SUCCESS',
           payload: resJson._embedded.tickets,
@@ -113,6 +110,19 @@ export const Tickets = () => {
       width: 60,
       accessor: '_links.self.href',
       Cell: (row) => <ReadTicket ticket={row.original} />,
+    },
+    {
+      id: 'created',
+      Header: 'Created',
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      },
+      accessor: (row) =>
+        row.created === null
+          ? ''
+          : moment(row.created).format('DD/MM/YYYY  HH:mm'),
     },
     {
       Header: 'Checksum',

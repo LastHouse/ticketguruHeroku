@@ -1,7 +1,7 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../utils/AuthContext';
 
-export const EventsContext = createContext();
+export const EventsContext = React.createContext();
 
 export const EventsProvider = (props) => {
   const [events, setEvents] = useState([]);
@@ -10,30 +10,23 @@ export const EventsProvider = (props) => {
   const { auth } = useAuthContext();
 
   useEffect(() => {
-    (async () => {
-      const [eventResult, eventTicketResult] = await Promise.all([
-        fetch('https://rbmk-ticketguru-backend.herokuapp.com/api/events', {
-          headers: {
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }),
-        fetch(
-          'https://rbmk-ticketguru-backend.herokuapp.com/api/eventTickets',
-          {
-            headers: {
-              Authorization: `Bearer ${auth.token}`,
-            },
-          }
-        ),
-      ]);
-      setEvents(await eventResult.json());
-      setEventTickets(await eventTicketResult.json());
-      setLoading(false);
-    })();
+    const fetchEvents = () => {
+      fetch('https://rbmk-ticketguru-backend.herokuapp.com/api/events', {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => setEvents(data._embedded.events))
+        .catch((err) => console.error(err));
+    };
+    fetchEvents();
   }, [auth.token]);
 
   return (
-    <EventsContext.Provider value={{ events, eventTickets, loading }}>
+    <EventsContext.Provider
+      value={[events, setEvents, eventTickets, setEventTickets, loading]}
+    >
       {props.children}
     </EventsContext.Provider>
   );

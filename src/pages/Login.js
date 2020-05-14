@@ -104,7 +104,7 @@ export const Login = () => {
           errorMessage: error.message || error.statusText,
         });
       });
-    history.push('/app/home');
+    history.push('/app/eventstable');
   }
 
   return (
@@ -152,7 +152,7 @@ export const Login = () => {
           <Button
             disabled={user.isSubmitting}
             fullWidth
-            href="/home"
+            href="/eventstable"
             variant="contained"
             color="primary"
             className={classes.submit}

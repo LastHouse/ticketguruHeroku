@@ -11,45 +11,42 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import moment from 'moment/moment.js';
-import 'moment-timezone';
-
-export default function SaleRows(props) {
+export default function User(props) {
   const { auth } = useAuthContext();
   const [open, setOpen] = useState(false);
-  const [saleRowTickets, setSaleRowTickets] = useState([]);
+  const [saleRowUser, setSaleRowUser] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
-    fetchSaleRow();
+    fetchSaleUser();
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const fetchSaleRow = () => {
-    fetch(props.saleRow._links.tickets.href, {
+  const fetchSaleUser = () => {
+    fetch(props.saleRow._links.user.href, {
       headers: {
         Authorization: `Bearer ${auth.token}`,
       },
     })
       .then((response) => response.json())
-      .then((data) => setSaleRowTickets(data._embedded.tickets))
+      .then((data) => setSaleRowUser(data))
       .catch((err) => console.error(err));
   };
 
   return (
     <div>
       <CssBaseline />
-      <Tooltip title="Tickets">
+      <Tooltip title="User">
         <Button
           variant="outlined"
           color="secondary"
           onClick={() => handleClickOpen()}
           size="small"
         >
-          Tickets from Sale Event
+          User from Sale Event
         </Button>
       </Tooltip>
       <Dialog
@@ -57,19 +54,13 @@ export default function SaleRows(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Sale Rows</DialogTitle>
+        <DialogTitle id="form-dialog-title">User</DialogTitle>
 
         <DialogContent>
           <List>
-            {saleRowTickets.map((item, i) => (
-              <ListItem key={i}>
-                <ListItemText>
-                  {i + 1}. Created:
-                  {moment(item.created).format('DD/MM/YYYY HH:mm')} <br></br>
-                </ListItemText>
-                <ListItemText> Ticket Checksum: {item.checksum}</ListItemText>
-              </ListItem>
-            ))}
+            <ListItem>
+              <ListItemText> Users name: {saleRowUser.name}</ListItemText>
+            </ListItem>
           </List>
         </DialogContent>
         <DialogActions>

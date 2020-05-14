@@ -94,8 +94,12 @@ export default function ShoppingCart() {
   }
 
   const receipt = () => {
-    console.log(newTicket.map((item) => item.checksum));
+    //console.log(newTicket.map((item) => item.checksum));
     setNewTicket([]);
+  };
+
+  const emptyCart = () => {
+    setCart([]);
   };
 
   function Content({ list }) {
@@ -119,13 +123,13 @@ export default function ShoppingCart() {
               <p>Price: {cart[i].price} €</p>
               <p>
                 Date & Time:{' '}
-                {moment(cart[0].dateTime).format('DD/MM/YYYY HH:mm')}
+                {moment(cart[i].dateTime).format('DD/MM/YYYY HH:mm')}
               </p>
               <Divider />
             </div>
           ))}
           <Divider />
-          <h4>Total price: {totalPrice} €</h4>
+          <h3>Total price: {totalPrice} €</h3>
         </div>
       );
     }
@@ -155,7 +159,15 @@ export default function ShoppingCart() {
                   <Content list={cart} />
                   <Button
                     size="small"
-                    variant="contained"
+                    //variant="contained"
+                    onClick={emptyCart}
+                    color="secondary"
+                  >
+                    Empty Cart
+                  </Button>
+                  <Button
+                    size="small"
+                    //variant="contained"
                     onClick={sellTicket}
                     color="secondary"
                   >
@@ -191,7 +203,7 @@ export default function ShoppingCart() {
                           bgColor="#FFFFFF"
                           fgColor="#000000"
                           level="Q"
-                          style={{ width: 300 }}
+                          style={{ width: 280 }}
                           value={item.checksum}
                         />
                       </div>
@@ -199,7 +211,7 @@ export default function ShoppingCart() {
                   ))}
                   <Button
                     size="small"
-                    variant="contained"
+                    //variant="contained"
                     onClick={receipt}
                     color="secondary"
                   >
